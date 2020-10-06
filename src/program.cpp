@@ -43,7 +43,7 @@ int program::add_op_param_ndarray(
 
 evaluation *program::build()
 {
-    eval = new evaluation(vec);
+    evaluation *eval = new evaluation(vec);
     eval->keyStr = keyStr;
     return eval;
 }

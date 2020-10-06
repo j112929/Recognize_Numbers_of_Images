@@ -34,7 +34,6 @@ public:
 private:
     std::string keyStr;
     std::vector<expression> vec;
-    evaluation *eval;
 }; // class program
 
 #endif // PROGRAM_H
