@@ -24,20 +24,18 @@ void evaluation::add_kwargs_ndarray(
 }
 
 int evaluation::execute() {
-    map<string, string> key_op;
     map<string, double> key_str;
-    map<string, double>::iterator l_it;
     string keys_;
     std::vector<int> t_i;
     double val_ = 0.0;
     for (auto i : exps) {
         if (0 != i.opname.compare("")) {
             if (0 == i.optype.compare("Input")) {
-                Input(i, key_op, key_str, keys_);
+                Input(i, key_str, keys_);
             }
         } else if (0 == i.opname.compare("")) {
             if (0 == i.optype.compare("Const")) {
-                Const(i, key_op, key_str, keys_);
+                Const(i, key_str, keys_);
             } else if (0 == i.optype.compare("Add")) {
                 Add(i, key_str, keys_, val_);
             } else if (0 == i.optype.compare("Sub")) {
@@ -49,7 +47,6 @@ int evaluation::execute() {
     }
     result_ = val_;
     key_str.clear();
-    key_op.clear();
     return 0;
 }
 
@@ -87,18 +84,15 @@ void evaluation::Add(expression &i, map<string, double> &key_str, string &keys_,
     key_op_type = 2;
 }
 
-void evaluation::Const(expression &i, map<string, string> &key_op, map<string, double> &key_str, string &keys_) {
+void evaluation::Const(expression &i, map<string, double> &key_str, string &keys_) {
     keys_ = "t" + to_string(i.exp_id);
-    key_op[keys_] = "value";
     key_str[keys_] = contextMap["value"];
     key_op_type = 0;
 }
 
-void evaluation::Input(expression &i, map<string, string> &key_op, map<string, double> &key_str, string &keys_) {
+void evaluation::Input(expression &i, map<string, double> &key_str, string &keys_) {
     keys_ = "t" + to_string(i.exp_id);
-//    key_op[keys_] = i.opname.c_str();
-    key_op[keys_] = i.opname;
-    key_str[keys_] = contextMap[key_op[keys_]];
+    key_str[keys_] = contextMap[i.opname];
     key_op_type = 1;
 }
 
