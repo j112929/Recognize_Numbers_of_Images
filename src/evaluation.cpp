@@ -58,7 +58,7 @@ void evaluation::Mul(expression &i, map<string, double> &key_str, string &keys_,
     }
     keys_ = "t" + to_string(i.exp_id);
     key_str[keys_] = val_;
-    key_op_type = 2;
+//    key_op_type = 2;
 }
 
 void evaluation::Sub(vector<int> &t_i, expression &i, map<string, double> &key_str, string &keys_, double &val_) {
@@ -70,7 +70,7 @@ void evaluation::Sub(vector<int> &t_i, expression &i, map<string, double> &key_s
     val_ = val_ - key_str[keys_];
     keys_ = "t" + to_string(i.exp_id);
     key_str[keys_] = val_;
-    key_op_type = 2;
+//    key_op_type = 2;
 }
 
 void evaluation::Add(expression &i, map<string, double> &key_str, string &keys_, double &val_) {
@@ -81,21 +81,21 @@ void evaluation::Add(expression &i, map<string, double> &key_str, string &keys_,
     }
     keys_ = "t" + to_string(i.exp_id);
     key_str[keys_] = val_;
-    key_op_type = 2;
+//    key_op_type = 2;
 }
 
 void evaluation::Const(expression &i, map<string, double> &key_str, string &keys_, double &val_) {
     keys_ = "t" + to_string(i.exp_id);
     key_str[keys_] = contextMap["value"];
     val_ = key_str[keys_];
-    key_op_type = 0;
+//    key_op_type = 0;
 }
 
 void evaluation::Input(expression &i, map<string, double> &key_str, string &keys_, double &val_) {
     keys_ = "t" + to_string(i.exp_id);
     key_str[keys_] = contextMap[i.opname];
     val_ = key_str[keys_];
-    key_op_type = 1;
+//    key_op_type = 1;
 }
 
 
@@ -109,9 +109,10 @@ double &evaluation::get_result() {
     return result_;
 }
 
+/*
 double evaluation::get_map(string key) {
     printf("eval->Input k %s\n", key.c_str());
     double d = contextMap[key];
     printf("eval->Input d %f\n", d);
     return d;
-}
+}*/

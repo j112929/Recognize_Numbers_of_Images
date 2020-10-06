@@ -28,9 +28,7 @@ public:
 
 private:
     double result_;
-    int key_op_type;
     std::vector<expression> exps;
-    double get_map(std::string key);
 
     void Input(expression &i, std::map<string, double> &key_str, std::string &keys_, double &val_);
 
