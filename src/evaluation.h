@@ -32,9 +32,9 @@ private:
     std::vector<expression> exps;
     double get_map(std::string key);
 
-    void Input(expression &i, std::map<string, double> &key_str, std::string &keys_);
+    void Input(expression &i, std::map<string, double> &key_str, std::string &keys_, double &val_);
 
-    void Const(expression &i, map<string, double> &key_str, string &keys_);
+    void Const(expression &i, map<string, double> &key_str, string &keys_, double &val_);
 
     void Add(expression &i, map<string, double> &key_str, string &keys_, double &val_);
 

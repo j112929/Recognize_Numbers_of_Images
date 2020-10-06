@@ -31,11 +31,11 @@ int evaluation::execute() {
     for (auto i : exps) {
         if (0 != i.opname.compare("")) {
             if (0 == i.optype.compare("Input")) {
-                Input(i, key_str, keys_);
+                Input(i, key_str, keys_, val_);
             }
         } else if (0 == i.opname.compare("")) {
             if (0 == i.optype.compare("Const")) {
-                Const(i, key_str, keys_);
+                Const(i, key_str, keys_, val_);
             } else if (0 == i.optype.compare("Add")) {
                 Add(i, key_str, keys_, val_);
             } else if (0 == i.optype.compare("Sub")) {
@@ -84,15 +84,17 @@ void evaluation::Add(expression &i, map<string, double> &key_str, string &keys_,
     key_op_type = 2;
 }
 
-void evaluation::Const(expression &i, map<string, double> &key_str, string &keys_) {
+void evaluation::Const(expression &i, map<string, double> &key_str, string &keys_, double &val_) {
     keys_ = "t" + to_string(i.exp_id);
     key_str[keys_] = contextMap["value"];
+    val_ = key_str[keys_];
     key_op_type = 0;
 }
 
-void evaluation::Input(expression &i, map<string, double> &key_str, string &keys_) {
+void evaluation::Input(expression &i, map<string, double> &key_str, string &keys_, double &val_) {
     keys_ = "t" + to_string(i.exp_id);
     key_str[keys_] = contextMap[i.opname];
+    val_ = key_str[keys_];
     key_op_type = 1;
 }
 
@@ -100,9 +102,9 @@ void evaluation::Input(expression &i, map<string, double> &key_str, string &keys
 
 double &evaluation::get_result() {
     printf("eval get_result first --------------- key= %s \n", keyStr.data());
-    if (0 == key_op_type || 1 == key_op_type) {
+    /*if (0 == key_op_type || 1 == key_op_type) {
         result_ = get_map(keyStr);
-    }
+    }*/
     printf("eval->get_result Input after val %f\n", result_);
     return result_;
 }
