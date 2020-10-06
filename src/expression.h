@@ -11,6 +11,10 @@ class expression
 {
     friend class evaluation;
 public:
+    int exp_id;
+    std::string opname;
+    std::string optype;
+    std::vector<int> input;
     expression(
         int expr_id,
         const char *op_name,
@@ -27,6 +31,7 @@ public:
         int dim,
         size_t shape[],
         double data[]);
+private:
 }; // class expression
 
 #endif // EXPRESSION_H

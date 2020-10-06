@@ -6,7 +6,11 @@ expression::expression(
     const char *op_type,
     int *inputs,
     int num_inputs)
+    : input(inputs, inputs + num_inputs)
 {
+    exp_id = expr_id;
+    opname = op_name;
+    optype = op_type;
 }
 
 void expression::add_op_param_double(

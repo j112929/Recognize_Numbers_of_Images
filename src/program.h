@@ -8,6 +8,7 @@ class evaluation;
 class program
 {
 public:
+
     program();
 
     void append_expression(
@@ -30,6 +31,10 @@ public:
         double data[]);
 
     evaluation *build();
+private:
+    std::string keyStr;
+    std::vector<expression> vec;
+    evaluation *eval;
 }; // class program
 
 #endif // PROGRAM_H
