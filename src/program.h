@@ -32,6 +32,7 @@ public:
 
     evaluation *build();
 private:
+    int key_expr_id;
     std::string keyStr;
     std::vector<expression> vec;
 }; // class program

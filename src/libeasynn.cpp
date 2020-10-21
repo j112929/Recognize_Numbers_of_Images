@@ -19,7 +19,7 @@ void append_expression(
     int inputs[],
     int num_inputs)
 {
-    printf("program %p, expr_id %d, op_name %s, op_type %s, inputs %d (",
+    printf("lib.program.append_expression %p, expr_id %d, op_name %s, op_type %s, inputs %d (",
         prog, expr_id, op_name, op_type, num_inputs);
     for (int i = 0; i != num_inputs; ++i)
         printf("%d,", inputs[i]);
@@ -32,7 +32,7 @@ int add_op_param_double(
     const char *key,
     double value)
 {
-    printf("program %p, key %s, value %f\n",
+    printf("lib.program.add_op_param_double %p, key %s, value %f\n",
         prog, key, value);
     return prog->add_op_param_double(key, value);
 }
@@ -44,7 +44,7 @@ int add_op_param_ndarray(
     size_t shape[],
     double data[])
 {
-    printf("program %p, key %s, value %p dim %d (",
+    printf("lib.program.add_op_param_ndarray %p, key %s, value %p dim %d (",
         prog, key, data, dim);
     for (int i = 0; i != dim; ++i)
         printf("%zu,", shape[i]);
@@ -55,7 +55,7 @@ int add_op_param_ndarray(
 evaluation *build(program *prog)
 {
     evaluation *eval = prog->build();
-    printf("evaluation %p\n", eval);
+    printf("lib.evaluation %p\n", eval);
     return eval;
 }
 
@@ -64,7 +64,7 @@ void add_kwargs_double(
     const char *key,
     double value)
 {
-    printf("evaluation %p, key %s, value %f\n",
+    printf("lib.evaluation.add_kwargs_double %p, key %s, value %f\n",
         eval, key, value);
     eval->add_kwargs_double(key, value);
 }
@@ -76,7 +76,7 @@ void add_kwargs_ndarray(
     size_t shape[],
     double data[])
 {
-    printf("evaluation %p, key %s, value %p dim %d (",
+    printf("lib.evaluation.add_kwargs_ndarray %p, key %s, value %p dim %d (",
         eval, key, data, dim);
     for (int i = 0; i != dim; ++i)
         printf("%zu,", shape[i]);
@@ -90,14 +90,26 @@ int execute(
     size_t **p_shape,
     double **p_data)
 {
-    printf("evaluation %p, p_dim %p, p_shape %p, p_data %p\n",
-        eval, p_dim, p_shape, p_data);
+//    printf("evaluation.execute before %p, p_dim %p, p_shape %p, p_data %p\n",
+//        eval, p_dim, p_shape, p_data);
     int ret = eval->execute();
-    if (ret != 0)
+    if (ret != 0) {
         return ret;
-    *p_dim = 0;
-    *p_shape = nullptr;
-    *p_data = &eval->get_result();
-    fflush(stdout);
+    }
+//    *p_dim = 0;
+//    *p_shape = nullptr;
+//    *p_data = &eval->get_result1();
+
+    // logging and error checking
+//    double a = 0.500000;;
+//    if(&p_data == 0.500000) {
+        printf("------\n");
+        tensor &res = eval->get_result();
+        *p_dim = res.get_dim();
+        *p_shape = res.get_shape_array();
+        *p_data = res.get_data_array();
+//        printf("-----*p_data:%f\n",&p_data);
+//    }
+//    fflush(stdout);
     return 0;
 }

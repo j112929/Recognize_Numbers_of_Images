@@ -10,7 +10,9 @@ expression::expression(
 {
     exp_id = expr_id;
     opname = op_name;
+    opName = op_name;
     optype = op_type;
+//    num_inputs = num_inputs;
 }
 
 void expression::add_op_param_double(
@@ -26,3 +28,6 @@ void expression::add_op_param_ndarray(
     double data[])
 {
 }
+/*tensor expression::get_op_param(const char *) const{
+
+}*/

@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <list>
+#include "tensor.h"
 
 class evaluation;
 
@@ -13,6 +15,7 @@ class expression
 public:
     int exp_id;
     std::string opname;
+    const char *opName;
     std::string optype;
     std::vector<int> input;
     expression(
@@ -31,7 +34,7 @@ public:
         int dim,
         size_t shape[],
         double data[]);
-private:
+//    tensor get_op_param(const char *) const;
 }; // class expression
 
 #endif // EXPRESSION_H
