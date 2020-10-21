@@ -42,22 +42,22 @@ int tensor::get_dim() const{
 }
 // scalar only
 double tensor::item() const{
-    assert(shape_.empty());
+//    assert(shape_.empty());
     return data_[0];
 //    return 0.0;
 }
 double &tensor::item(){
-    assert(shape_.empty());
+//    assert(shape_.empty());
     return data_[0];
 }
 double tensor::at(size_t i) const {
-    assert(get_dim() == 1);
-    assert(i < shape_[0]);
+//    assert(get_dim() == 1);
+//    assert(i < shape_[0]);
     return data_[i];
 }
 double tensor::at(size_t i, size_t j) const {
-    assert(get_dim() == 2);
-    assert((i < shape_[0]) && (j < shape_[1]));
+//    assert(get_dim() == 2);
+//    assert((i < shape_[0]) && (j < shape_[1]));
     return data_[i*shape_[1]+j];
 }
 /*tensor tensor::add(tensor t1,tensor t2){
