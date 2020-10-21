@@ -1,6 +1,6 @@
 #include "program.h"
 #include "evaluation.h"
-
+#include <string.h>
 extern std::map<std::string, double> contextMap;
 extern map<string, tensor> contextArrMap;
 
@@ -54,7 +54,7 @@ int program::add_op_param_ndarray(
     printf(")\n");
     const char *a = "value";
 //    printf("key == value:%d, key_expr_id:%d\n", strncmp(key,a, strlen(key)),key_expr_id);
-    if (strncmp(key,a, strlen(key)) == 0) {
+    if (strncmp(key, a, strlen(key)) == 0) {
         printf("key == value\n");
         keyStr = to_string(key_expr_id);
     }else{
@@ -62,7 +62,7 @@ int program::add_op_param_ndarray(
     }
     tensor *t = new tensor(dim, shape, data);
     double b = t->data_[0];
-    printf("-----b:%f,contextArrMap.size:%d, keyStr:%s\n", b, contextArrMap.size(), &keyStr);
+//    printf("-----b:%f,contextArrMap.size:%d, keyStr:%s\n", b, contextArrMap.size(), &keyStr);
     contextArrMap[keyStr] = *t;
     return 0;
 }
