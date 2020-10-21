@@ -26,7 +26,7 @@ int program::add_op_param_double(
     printf("prog.add_op_param_double  key= %s, value= %f\n",
            key, value);
     const char *a = "value";
-    printf("key == value:%d, key_expr_id:%d\n", strncmp(key,a, strlen(key)),key_expr_id);
+//    printf("key == value:%d, key_expr_id:%d\n", strncmp(key,a, strlen(key)),key_expr_id);
     if (strncmp(key,a, strlen(key)) == 0) {
         printf("key == value\n");
         keyStr = key + key_expr_id;
@@ -53,7 +53,7 @@ int program::add_op_param_ndarray(
         printf("%zu,", shape[i]);
     printf(")\n");
     const char *a = "value";
-    printf("key == value:%d, key_expr_id:%d\n", strncmp(key,a, strlen(key)),key_expr_id);
+//    printf("key == value:%d, key_expr_id:%d\n", strncmp(key,a, strlen(key)),key_expr_id);
     if (strncmp(key,a, strlen(key)) == 0) {
         printf("key == value\n");
         keyStr = to_string(key_expr_id);
