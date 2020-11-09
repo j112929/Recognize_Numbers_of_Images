@@ -34,7 +34,10 @@ public:
         int dim,
         size_t shape[],
         double data[]);
-//    tensor get_op_param(const char *) const;
+    tensor get_op_param(const char *) const;
+
+    string get_op_type() const;
+
 }; // class expression
 
 #endif // EXPRESSION_H

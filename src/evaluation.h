@@ -3,7 +3,8 @@
 
 #include "expression.h"
 #include "tensor.h"
-//#include "op/eval_op.h"
+#include <memory>
+//#include "eval_op.h"
 
 using namespace std;
 class evaluation
@@ -12,7 +13,7 @@ public:
     std::string keyStr;
     int key_expr_id;
     evaluation(const std::vector<expression> &exprs);
-
+//    evaluation(const std::vector<expression> &exprs, eval_op_proto_map &proto_map);
     void add_kwargs_double(
         const char *key,
         double value);
@@ -32,11 +33,13 @@ public:
 
 
 private:
+    std::map<std::string, double> kwargs_;
+//    std::map<std::string, tensor> kwargs_tensor;
     double result_;
     std::vector<expression> exps;
 
     std::map<int, tensor> variables_;
-    std::map<string, tensor> kwargs_;
+//    std::map<string, tensor> kwargs_;
 //    std::vector<std::shared_ptr<eval_op>> ops_; // instead of exprs_
     void Input1(expression &i, std::map<int, tensor > &key_str_arr);
     void Const1(expression &i, std::map<int, tensor > &key_str_arr);
@@ -45,6 +48,14 @@ private:
     void Mul1(expression &i, std::map<int, tensor > &key_str_arr);
     void OneMatrix( double &temp1, int row_2, int col_2, vector<double> &temp2,vector<double> &result);
     void MultMatrix(int row_1, int col_1, vector<double> &temp1, int row_2, int col_2, vector<double> &temp2, vector<double> &result);
+    void MultMatrix2(int row_1, int col_1, vector<double> &temp1, int row_2, int col_2, vector<double> &temp2, vector<double> &result);
+
+    void ReLU(expression &i, std::map<int, tensor> &key_str_arr);
+    void Flatten(expression &i, std::map<int, tensor> &key_str_arr);
+    void Input2d(expression &i, std::map<int, tensor> &key_str_arr);
+    void Linear(expression &i, std::map<int, tensor> &key_str_arr);
+    void MaxPool2d(expression &i, std::map<int, tensor> &key_str_arr);
+    void Conv2d(expression &i, std::map<int, tensor> &key_str_arr);
 
     void Input(expression &i, std::map<string, double> &key_str, std::string &keys_, double &val_);
 
@@ -59,6 +70,9 @@ private:
 
 
 
-}; // class evaluation
+};
+
+
+// class evaluation
 
 #endif // EVALUATION_H
