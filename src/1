@@ -1,0 +1,133 @@
+int operation::Conv2d(int finalExpr,map<int,expression*> expr_map,const map<string,tensor> *tensors,tensor* ret)
+{
+    cout << "Conv2d operation 0" << endl;
+    expression *expr = expr_map[finalExpr];
+    //cout<<"MaxPool2d.op_name:"<<expr->get_op_name()<<endl;
+    if (expr->get_num_inputs() < 0)
+    {
+        cout << "Conv2d operation must have at least one operand!" << expr->get_expr_id() << endl;
+        return -1;
+    }
+    for (int i = 0; i < expr->get_num_inputs(); i++)
+    {
+        cout << "Conv2d.Inputs[" << i << "]=" << expr->get_inputs()[i] << endl;
+    }
+    expression *a = expr_map[expr->get_inputs()[0]];
+    tensor val_x;
+    int ret_a = -1;
+    ret_a = (fun_map[a->get_op_type()])(a->get_expr_id(), expr_map, tensors, &val_x);
+    if (ret_a != 0)
+    {
+        cout << "Conv2d operation failed!" << endl;
+        return -1;
+    }
+
+    cout << "Conv2d get Value:" << val_x.toString() << endl;
+    size_t N = val_x.get_Shape()[0];
+    size_t C = val_x.get_Shape()[1];
+    size_t H = val_x.get_Shape()[2];
+    size_t W = val_x.get_Shape()[3];
+    cout << "N<C<H<W:" << N << C << H << W << endl;
+
+    map<string, tensor>::const_iterator it = tensors->begin();
+    // for (; it != tensors->end(); it++)
+    // {
+    //     cout << "t:key:" << it->first << endl;
+    // }
+    string key = "weight"+std::to_string(finalExpr);
+    it = tensors->find(key);
+    if (it == tensors->end())
+    {
+        cout << "Conv2d No weight!" << endl;
+        return -1;
+    }
+    tensor weight_t = it->second;
+    key = "bias"+std::to_string(finalExpr);
+    it = tensors->find(key);
+    if (it == tensors->end())
+    {
+        cout << "Conv2d No bias!" << endl;
+        return -1;
+    }
+    tensor bias_t = it->second;
+    cout << "k<s:" << weight_t.toString() << "," << bias_t.toString() << endl;
+
+    // key = "in_channels"+std::to_string(finalExpr);
+    // it = tensors->find(key);
+    // if (it == tensors->end())
+    // {
+    //     cout << "Conv2d No in_channels!" << endl;
+    //     return -1;
+    // }
+    // size_t in_channels = it->seco
+    key = "out_channels"+std::to_string(finalExpr);
+        it = tensors->find(key);
+        if (it == tensors->end())
+        {
+            cout << "Conv2d No out_channels!" << endl;
+            return -1;
+        }
+        size_t out_channels = it->second.item();
+
+        key = "kernel_size"+std::to_string(finalExpr);
+        it = tensors->find(key);
+        if (it == tensors->end())
+        {
+            cout << "Conv2d No kernel_size!" << endl;
+            return -1;
+        }
+        size_t kernel_size = it->second.item();
+
+        // key = "padding"+std::to_string(finalExpr);
+        // it = tensors->find(key);
+        // if (it == tensors->end())
+        // {
+        //     cout << "Conv2d No padding!" << endl;
+        //     return -1;
+        // }
+        // size_t padding = it->second.item();
+
+
+        size_t H_st = H + 1 - kernel_size;
+        size_t W_st = W + 1 - kernel_size;
+        cout<<"H_ST:"<<H_st<<",W_ST:"<<W_st<<endl;
+        double sum = 0;
+        vector<double> data;
+        size_t count = 0;
+        for(size_t i = 0;i<N;i++)
+        {
+            for(size_t j=0;j<out_channels;j++)
+            {
+                for(size_t h_it=0;h_it<H_st;h_it++)
+                {
+                    for(size_t w_it=0;w_it<W_st;w_it++)
+                    {
+                        for(size_t k=0;k<C;k++)
+                        {
+                            for(size_t m=0;m<kernel_size;m++)
+                            {
+                                for(size_t n=0;n<kernel_size;n++)
+                                {
+                                    size_t data_idx = (i*C*H*W)+(k*H*W)+(n*W+h_it*W)+m+w_it;
+                                    size_t weight_idx = (j*C*kernel_size*kernel_size)+(k*kernel_size*kernel_size)+n*kernel_size+m;
+                                    sum = sum+val_x.at(data_idx)*weight_t.at(weight_idx);
+                                }
+                            }
+                        }
+                        count++;
+                        data.push_back(sum+bias_t.at(j));
+                        sum = 0;
+                    }
+                }
+            }
+        }
+
+        vector<size_t> shape;
+        shape.push_back(N);
+        shape.push_back(out_channels);
+            shape.push_back(H-kernel_size+1);
+            shape.push_back(W-kernel_size+1);
+            ret->clone(data,shape);
+            cout<<"Conv2d Done:"<<ret->toString()<<endl;
+            return 0;
+        }
