@@ -76,10 +76,10 @@ def Conv2d_backprop_W(p_out, in_nchw, kernel_W, kernel_b):
 
 # return p_in for the whole batch
 def Conv2d_backprop_in(p_out, in_nchw, kernel_W, kernel_b):
-    print("p_out.shape:%s", p_out.shape)
-    print("in_nchw.shape:%s", in_nchw.shape)
-    print("kernel_W.shape:%s", kernel_W.shape)
-    print("kernel_b.shape:%s", kernel_b.shape)
+    # print("p_out.shape:%s", p_out.shape)
+    # print("in_nchw.shape:%s", in_nchw.shape)
+    # print("kernel_W.shape:%s", kernel_W.shape)
+    # print("kernel_b.shape:%s", kernel_b.shape)
     OC, IC, KH, KW = kernel_W.shape
     N, C, H, W = in_nchw.shape
     if C != IC or kernel_b.shape != (OC,) or p_out.shape != (N, OC, H - KH + 1, W - KW + 1):
@@ -194,22 +194,20 @@ def backprop(labels, theta, z, h, g, ry, cy, y, rx, cx, x):
         # z = Linear_f(h)
         #   compute partial J to partial h[i]
         #   accumulate partial J to partial f_W, f_b
+        # p_h[i, :] = np.dot(f_W.transpose(), p_z)
+        # p_f_W += p_z.reshape(-1, 1) * h[i].reshape(1, -1)
+        # p_f_b += p_z
         p_h[i, :] = np.dot(f_W.transpose(), p_z)
-        p_f_W += p_z.reshape(-1, 1) * h[i, :].reshape(1, -1)
+        p_f_W += p_z.reshape(-1, 1) * h[i].reshape(1, -1)
         p_f_b += p_z
-
     # process the whole batch together for better efficiency
 
     # h = Flatten(g)
     #   compute partial J to partial g
-    # print("p_h.shape:%s",p_h.shape)
-    p_g = p_h.reshape(N, 2 * N, N, N)
+    p_g = p_h.reshape(g.shape)
 
     # g = MaxPool(ry)
     #   compute partial J to partial ry
-    # print("g.shape:%s",g.shape)
-    # print("pg.shape:%s",p_g.shape)
-    # print("ry.shape:%s",ry.shape)
     p_ry = MaxPool_2by2_backprop(p_g, g, ry)
 
     # ry = ReLU(cy)
@@ -219,13 +217,17 @@ def backprop(labels, theta, z, h, g, ry, cy, y, rx, cx, x):
     # cy = Conv2d_c2(y)
     #   compute partial J to partial y
     #   compute partial J to partial c2_W, c2_b
-    p_y = Conv2d_backprop_in(p_cy.reshape( N, N, N+1,N+1), y, c2_W, c2_b)
-    p_c2_W = Conv2d_backprop_W(p_y, y, c2_W, c2_b)
-    p_c2_b = Conv2d_backprop_b(p_y, y[i], c2_W, c2_b)
+    # 1) 4,8,4,4
+    # 2) 4,18,8,8
+    p_y = Conv2d_backprop_in(p_cy, y, c2_W, c2_b)
+    # y.reshape(y.shape[3],y.shape[2], y.shape[1],y.shape[0]),
+    # y.reshape(N,2*N,2*N, 2*N ),
+    p_c2_W = Conv2d_backprop_W(p_cy, y, c2_W, c2_b)
+    p_c2_b = Conv2d_backprop_b(p_cy, y, c2_W, c2_b)
 
     # y = MaxPool(rx)
     #   compute partial J to partial rx
-    p_rx = MaxPool_2by2_backprop(p_y, p_y.shape, rx.shape)
+    p_rx = MaxPool_2by2_backprop(p_y, y, rx)
 
     # rx = ReLU(cx)
     #   compute partial J to partial cx
@@ -233,8 +235,8 @@ def backprop(labels, theta, z, h, g, ry, cy, y, rx, cx, x):
 
     # cx = Conv2d_c1(x)
     #   compute partial J to partial c1_W, c1_b
-    p_c1_W = Conv2d_backprop_W(cx, cx.shape, c1_W, c1_b)
-    p_c1_b = Conv2d_backprop_W(p_cx, p_cx.shape, c1_W, c1_b)
+    p_c1_W = Conv2d_backprop_W(p_cx, x, c1_W, c1_b)
+    p_c1_b = Conv2d_backprop_b(p_cx, x, c1_W, c1_b)
 
     # ToDo: modify code below as needed
     # return None
@@ -265,6 +267,7 @@ def update_theta(theta, nabla_J, epsilon):
 
 # ToDo: set numpy random seed to the last 8 digits of your CWID
 np.random.seed(12345678)
+# np.random.seed(12345670)
 
 # load training data and split them for validation/training
 mnist_train = np.load("mnist_train.npz")
@@ -274,7 +277,7 @@ training_images = mnist_train["images"][1000:21000]
 training_labels = mnist_train["labels"][1000:21000]
 
 # hyperparameters
-bound = 0.05  # initial weight range
+bound = 0.05 # initial weight range
 epsilon = 0.0009  # learning rate
 batch_size = 4
 
@@ -297,8 +300,11 @@ for epoch in range(5):
     z, _, _, _, _, _, _, _, _ = forward(validation_images, theta)
     pred_labels = z.argmax(axis=1)
     count = sum(pred_labels == validation_labels)
-    print("epoch %d, accuracy %.3f, time %.2f" % (
-        epoch, count / validation_images.shape[0], time.time() - start))
+    expz = np.exp(z-np.max(z,axis=1,keepdims=True))
+    pred = expz/sum(expz)
+    loss=sum(-np.log(pred[i,validation_labels[i]]) for i in range(1000))
+    print("epoch %d, accuracy %.3f,loss %.3f, time %.2f" % (
+        epoch, count / validation_images.shape[0], loss, time.time() - start))
 
 # save the weights to be submitted
 save_theta(theta)
