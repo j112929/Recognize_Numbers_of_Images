@@ -1,6 +1,4 @@
-#ssh zji@uranus.ece.iit.edu  
-# password: ss8895
-- ece449@uranus.ece.iit.edu:zji
+
 # /home/ece449/show
 
 # /home/ece449/request grade_p6
