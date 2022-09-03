@@ -103,7 +103,7 @@ def backprop(labels, theta, z, h, g, x):
 
 def partial_derivative_of_relu(matrix):
     matrix[matrix <= 0] = 0
-    matrix[matrix > 0] = 0
+    matrix[matrix > 0] = 1
     return matrix
 # apply SGD to update theta by nabla_J and the learning rate epsilon
 # return updated theta
@@ -122,7 +122,7 @@ def update_theta(theta, nabla_J, epsilon):
 
 
 # ToDo: set numpy random seed to the last 8 digits of your CWID
-np.random.seed(12345678)
+np.random.seed(20478895)
 
 # load training data and split them for validation/training
 mnist_train = np.load("mnist_train.npz")
@@ -133,13 +133,17 @@ training_labels = mnist_train["labels"][1000:]
 
 # hyperparameters
 bound = 0.01  # initial weight range
-epsilon = 0.00009  # learning rate
+epsilon = 0.0001
+    # 0.00009  # learning rate
 batch_size = 4
+    # 4
 
 # start training
 start = time.time()
 theta = initialize_theta(bound)
 batches = training_images.shape[0] // batch_size
+sum_loss = 0
+sum_accuracy = 0
 for epoch in range(10):
     indices = np.arange(training_images.shape[0])
     np.random.shuffle(indices)
@@ -155,8 +159,19 @@ for epoch in range(10):
     z, _, _, _ = forward(validation_images, theta)
     pred_labels = z.argmax(axis=1)
     count = sum(pred_labels == validation_labels)
-    print("epoch %d, accuracy %.3f, time %.2f" % (
-        epoch, count / validation_images.shape[0], time.time() - start))
+
+    expz = np.exp(z-np.max(z,axis=1,keepdims=True))
+    pred = expz/sum(expz)
+    loss=sum(-np.log(pred[i,validation_labels[i]]) for i in range(1000))
+    accuracy = count / validation_images.shape[0]
+    print("epoch %d, accuracy %.3f,loss %.3f, time %.2f" % (
+        epoch, accuracy, loss, time.time() - start))
+    sum_accuracy = sum_accuracy+accuracy
+    sum_loss = sum_loss+loss
+
+avg_accuracy = sum_accuracy / 10
+avg_loss = sum_loss / 10
+print("accuracy %.3f,loss %.3f" % (avg_accuracy, avg_loss))
 
 # save the weights to be submitted
 save_theta(theta)

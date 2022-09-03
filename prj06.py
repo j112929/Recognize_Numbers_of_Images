@@ -277,15 +277,19 @@ training_images = mnist_train["images"][1000:21000]
 training_labels = mnist_train["labels"][1000:21000]
 
 # hyperparameters
-bound = 0.05 # initial weight range
-epsilon = 0.0009  # learning rate
+bound = 0.01
+    # 0.05 # initial weight range
+epsilon = 0.001
+    # 0.0009  # learning rate
 batch_size = 4
 
 # start training
 start = time.time()
 theta = initialize_theta(bound)
 batches = training_images.shape[0] // batch_size
-for epoch in range(5):
+sum_accuracy = 0
+sum_loss = 0
+for epoch in range(10):
     indices = np.arange(training_images.shape[0])
     np.random.shuffle(indices)
     for i in range(batches):
@@ -303,8 +307,15 @@ for epoch in range(5):
     expz = np.exp(z-np.max(z,axis=1,keepdims=True))
     pred = expz/sum(expz)
     loss=sum(-np.log(pred[i,validation_labels[i]]) for i in range(1000))
+    accuracy = count / validation_images.shape[0]
     print("epoch %d, accuracy %.3f,loss %.3f, time %.2f" % (
-        epoch, count / validation_images.shape[0], loss, time.time() - start))
+        epoch, accuracy, loss, time.time() - start))
+    sum_accuracy = sum_accuracy+accuracy
+    sum_loss = sum_loss+loss
+
+avg_accuracy = sum_accuracy / 10
+avg_loss = sum_loss / 10
+print("accuracy %.3f,loss %.3f" % (avg_accuracy, avg_loss))
 
 # save the weights to be submitted
 save_theta(theta)
