@@ -1,4 +1,4 @@
-# my449
+# Recognize_Numbers_of_Images
 
 
 This is a project with C++11 and Python3.
