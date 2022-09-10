@@ -1,4 +1,4 @@
-# Recognize handwritten numbers in images
+# Recognize handwritten numbers in MINIST images
 
 
 This is a project with C++11 and Python3.
