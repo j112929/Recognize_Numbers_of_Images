@@ -1,4 +1,4 @@
-# Recognize_Numbers_of_Images
+# Recognize handwritten numbers in images
 
 
 This is a project with C++11 and Python3.
